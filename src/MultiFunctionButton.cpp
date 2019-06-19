@@ -2,17 +2,20 @@
 #include "Arduino.h"
 
 
+/**
+* Constructor function - sets defaults ready for use
+*/
 MultiFunctionButton::MultiFunctionButton()
 {
-	debounce = 20;
-	dblPressDelay = 250;
-	longHoldDelay = 750;
+	this->debounce = 20;
+	this->dblPressDelay = 250;
+	this->longHoldDelay = 750;
 
 	this->_state = true;
 	this->_lastState = true;
 	this->_dblPressWaiting = false;
 	this->_dblPressOnNextUp = false;
-	this->_singlePressOK = false; //Default = true
+	this->_singlePressOK = false;
 	this->_downTime = -1;
 	this->_upTime = -1;
 	this->_ignoreUP = false;
@@ -21,6 +24,17 @@ MultiFunctionButton::MultiFunctionButton()
 }
 
 
+
+/**
+* Configuration function to be used within your setup() function
+*
+* @param int pin
+* @param int pullMode PULL_UP|PULL_DOWN Defaults to PULL_DOWN
+* @param int Optional callback press function (Function Pointer)
+* @param int Optional callback double press function (Function Pointer)
+* @param int Optional callback press-hold function (Function Pointer)
+* @return void
+*/
 void MultiFunctionButton::configure(int pin, int pullMode = PULL_DOWN, void (*press)(int) = NULL, void (*doub)(int) = NULL, void (*hold)(int) = NULL)
 {
 	this->_pin = pin;
@@ -33,6 +47,11 @@ void MultiFunctionButton::configure(int pin, int pullMode = PULL_DOWN, void (*pr
 }
 
 
+/**
+* Check button state. To be used within your loop() function
+*
+* @return void
+*/
 void MultiFunctionButton::check(void)
 {
 	int resultEvent = 0;
@@ -42,7 +61,7 @@ void MultiFunctionButton::check(void)
 	// Button down
 	if (this->_state != this->_pullMode
 			&& this->_lastState == this->_pullMode
-			&& (millisRes - this->_upTime) > debounce)
+			&& (millisRes - this->_upTime) > this->debounce)
 	{
 		this->_downTime = millisRes;
 		this->_ignoreUP = false;
@@ -50,7 +69,7 @@ void MultiFunctionButton::check(void)
 		this->_singlePressOK = true;
 		this->_holdHappened = false;
 
-		if ((millisRes - this->_upTime) < dblPressDelay
+		if ((millisRes - this->_upTime) < this->dblPressDelay
 				&& this->_dblPressOnNextUp == false
 				&& this->_dblPressWaiting == true)
 		{
@@ -61,13 +80,12 @@ void MultiFunctionButton::check(void)
 			this->_dblPressOnNextUp = false;
 			this->_dblPressWaiting = false;
 		}
-
 	}
 
 	// Button released
 	else if (this->_state == this->_pullMode
 			&& this->_lastState != this->_pullMode
-			&& (millisRes - this->_downTime) > debounce)
+			&& (millisRes - this->_downTime) > this->debounce)
 	{
 		if (this->_ignoreUP == false)
 		{
@@ -89,7 +107,7 @@ void MultiFunctionButton::check(void)
 
 	// Test for normal Press event: dblPressDelay expired
 	if (this->_state == this->_pullMode
-			&& (millisRes - this->_upTime) >= dblPressDelay
+			&& (millisRes - this->_upTime) >= this->dblPressDelay
 			&& this->_dblPressWaiting == true
 			&& this->_dblPressOnNextUp == false
 			&& this->_singlePressOK == true
@@ -101,7 +119,7 @@ void MultiFunctionButton::check(void)
 
 	// Test for hold
 	if (this->_state != this->_pullMode
-			&& (millisRes - this->_downTime) >= longHoldDelay)
+			&& (millisRes - this->_downTime) >= this->longHoldDelay)
 	{
 		// Trigger hold
 		if (this->_holdHappened == false)
