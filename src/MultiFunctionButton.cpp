@@ -39,7 +39,7 @@ void MultiFunctionButton::configure(int pin, int pullMode = PULL_DOWN, void (*pr
 {
 	this->_pin = pin;
 	this->_pullMode = pullMode;
-	pinMode(this->_pin, INPUT);
+	pinMode(this->_pin, INPUT_PULLUP);
 
 	onPress = press;
 	onDblPress = doub;
