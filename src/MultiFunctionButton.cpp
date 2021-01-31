@@ -34,7 +34,7 @@ MultiFunctionButton::MultiFunctionButton()
 * @param int Optional callback press-hold function (Function Pointer)
 * @return void
 */
-void MultiFunctionButton::configure(int pin, int pullMode = PULL_UP, void (*press)(int) = NULL, void (*doub)(int) = NULL, void (*hold)(int) = NULL)
+void MultiFunctionButton::configure(int pin, int pullMode = PULL_DOWN, void (*press)(int) = NULL, void (*doub)(int) = NULL, void (*hold)(int) = NULL)
 {
 	this->_pin = pin;
 	this->_pullMode = pullMode;
